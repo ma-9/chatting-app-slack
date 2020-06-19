@@ -1,0 +1,24 @@
+html,
+body,
+.register-page,
+.login-page {
+  height: 90vh;
+  background: #eee;
+  padding: 1rem;
+}
+
+/* MessagePanel */
+.messages {
+  height: 440px;
+  overflow-y: scroll;
+}
+
+/* MessageForm */
+.message__form {
+  position: fixed !important;
+  bottom: 1em;
+  margin-left: 320px !important;
+  left: 0;
+  right: 0;
+  z-index: 200;
+}
