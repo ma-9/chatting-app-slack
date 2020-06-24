@@ -6,6 +6,7 @@ import {
   CommentAuthor,
   CommentMetadata,
   CommentText,
+  Image,
 } from 'semantic-ui-react';
 import moment from 'moment';
 
@@ -15,7 +16,8 @@ interface IComponentProps {
 }
 
 interface IMessage {
-  content: string;
+  content?: string;
+  image?: string;
   creator: {
     id: string;
     avataar: string;
@@ -34,6 +36,10 @@ const isOwnMessage = (message: IMessage, user: IUser) => {
   return message.creator.id === user.uid ? 'message__self' : '';
 };
 
+const isImage = (message: IMessage) => {
+  return message.hasOwnProperty('image') && !message.hasOwnProperty('content');
+};
+
 const timeFromNow = (time: string) => moment(time).fromNow();
 
 const InnerMessage: React.FC<IComponentProps> = ({ message, user }) => {
@@ -43,7 +49,11 @@ const InnerMessage: React.FC<IComponentProps> = ({ message, user }) => {
       <CommentContent className={isOwnMessage(message, user)}>
         <CommentAuthor as='a'> {message.creator.name} </CommentAuthor>
         <CommentMetadata> {timeFromNow(message.timestamp)} </CommentMetadata>
-        <CommentText> {message.content} </CommentText>
+        {isImage(message) ? (
+          <Image src={message.image} className='message__image' />
+        ) : (
+          <CommentText> {message.content} </CommentText>
+        )}
       </CommentContent>
     </Comment>
   );

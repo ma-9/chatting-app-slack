@@ -1,6 +1,7 @@
 import React from 'react';
 import UserPanel from './UserPanel/UserPanel';
 import ChannelPanel from './Channels/ChannelComponent';
+import DirectMessageComponent from './DirectMessages/DirectMessages';
 import { Menu } from 'semantic-ui-react';
 
 const SidePanel = ({ currentUser }: any) => {
@@ -14,6 +15,7 @@ const SidePanel = ({ currentUser }: any) => {
     >
       <UserPanel currentUser={currentUser} />
       <ChannelPanel currentUser={currentUser} />
+      <DirectMessageComponent />
     </Menu>
   );
 };

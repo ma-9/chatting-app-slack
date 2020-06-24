@@ -9,7 +9,7 @@ body,
 
 /* MessagePanel */
 .messages {
-  height: 440px;
+  height: 54vh;
   overflow-y: scroll;
 }
 
@@ -21,4 +21,23 @@ body,
   left: 0;
   right: 0;
   z-index: 200;
+}
+
+/* Inner Message Component */
+.message__self {
+  border-left: 2px solid orange;
+  padding-left: 8px;
+}
+.message__image {
+  padding: 1em;
+}
+
+/* Progress Bar Component */
+.progress__bar {
+  margin: 0.3em 0 0 0 !important;
+}
+
+/* Menu CSS for Side Panel */
+.menu {
+  padding-bottom: 2em;
 }
