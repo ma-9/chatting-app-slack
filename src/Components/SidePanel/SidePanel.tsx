@@ -15,7 +15,7 @@ const SidePanel = ({ currentUser }: any) => {
     >
       <UserPanel currentUser={currentUser} />
       <ChannelPanel currentUser={currentUser} />
-      <DirectMessageComponent />
+      <DirectMessageComponent currentUser={currentUser} />
     </Menu>
   );
 };

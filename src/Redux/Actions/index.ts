@@ -36,3 +36,12 @@ export const setCurrentChannel = (channel: IChannelProps) => {
     },
   };
 };
+
+export const setPrivateChannel = (value: boolean) => {
+  return {
+    type: actionTypes.SET_PRIVATE_CHANNEL,
+    payload: {
+      privateChannel: value,
+    },
+  };
+};

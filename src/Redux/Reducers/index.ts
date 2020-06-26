@@ -8,7 +8,10 @@ const initialState = {
     error: null,
   },
   channelState: {
-    currentChannel: null,
+    data: null,
+    loading: true,
+    error: null,
+    privateChannel: false,
   },
 };
 
@@ -45,9 +48,15 @@ const channel_reducer = (
   switch (type) {
     case actionTypes.SET_CURRENT_CHANNEL:
       return {
+        ...state,
         data: action.payload.currentChannel,
         loading: false,
         error: null,
+      };
+    case actionTypes.SET_PRIVATE_CHANNEL:
+      return {
+        ...state,
+        privateChannel: action.payload.privateChannel,
       };
     default:
       return state;

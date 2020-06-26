@@ -13,7 +13,7 @@ import {
 } from 'semantic-ui-react';
 import { MyFirebase } from 'Config';
 import { connect } from 'react-redux';
-import { setCurrentChannel } from 'Redux/Actions';
+import { setCurrentChannel, setPrivateChannel } from 'Redux/Actions';
 
 interface IComponentProps {
   currentUser: {
@@ -21,6 +21,7 @@ interface IComponentProps {
     displayName: string;
   };
   setCurrentChannel: any;
+  setPrivateChannel: any;
 }
 
 interface IChannelProps {
@@ -114,6 +115,7 @@ class ChannelComponent extends Component<IComponentProps> {
   handleChangeChannel = (channel: IChannelProps) => {
     this.setActiveChannel(channel);
     this.props.setCurrentChannel(channel);
+    this.props.setPrivateChannel(false);
   };
 
   setActiveChannel = (channel: IChannelProps) => {
@@ -201,4 +203,6 @@ class ChannelComponent extends Component<IComponentProps> {
   }
 }
 
-export default connect(null, { setCurrentChannel })(ChannelComponent);
+export default connect(null, { setCurrentChannel, setPrivateChannel })(
+  ChannelComponent
+);
