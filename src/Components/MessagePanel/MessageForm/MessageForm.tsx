@@ -9,6 +9,8 @@ import ProgressBar from '../ProgressBar/ProgressBar';
 interface IComponentProps {
   currentChannel: any;
   currentUser: any;
+  isPrivateChannel: any;
+  messageRef: any;
 }
 
 interface IComponentState {
@@ -18,27 +20,29 @@ interface IComponentState {
   isModalOpen: boolean;
   uploadState: string;
   uploadTask: any;
-  messageRef: any;
   percentUploaded: number;
   currentChannel: any;
   currentUser: any;
+  messageRef: any;
 }
 
 const MessageForm: React.FC<IComponentProps> = ({
   currentChannel,
   currentUser,
+  isPrivateChannel,
+  messageRef,
 }) => {
   const [state, setState] = useState<IComponentState>({
     message: '',
     loading: false,
     error: [],
-    messageRef: MyFirebase.database().ref('messages'),
     isModalOpen: false,
     uploadState: '',
     uploadTask: null,
     percentUploaded: 0,
     currentChannel,
     currentUser,
+    messageRef,
   });
 
   const handleOpenModal = () => {
@@ -65,7 +69,8 @@ const MessageForm: React.FC<IComponentProps> = ({
       setState((prevState) => {
         return { ...prevState, loading: true };
       });
-      state.messageRef
+      state
+        .messageRef()
         .child(currentChannel.id)
         .push()
         .set({
@@ -106,8 +111,16 @@ const MessageForm: React.FC<IComponentProps> = ({
     }
   };
 
+  const getPath = () => {
+    if (isPrivateChannel) {
+      return `chat/private-${state.currentChannel.id}`;
+    } else {
+      return `chat/public`;
+    }
+  };
+
   const handleUploadMedia = (file: any, metaData: any) => {
-    const filePath = `chat/public/${uuidv4()}.jpg`;
+    const filePath = `${getPath()}/${uuidv4()}.jpg`;
     setState((prevState: any) => {
       return {
         ...prevState,
@@ -171,42 +184,37 @@ const MessageForm: React.FC<IComponentProps> = ({
         });
     };
 
-    try {
-      state.percentUploaded === 100 &&
-        state.uploadTask.snapshot.ref
-          .getDownloadURL()
-          .then((downloadURL: string) => {
-            sendFileToMessage(
-              downloadURL,
-              state.messageRef,
-              state.currentChannel.id
-            );
-          })
-          .catch((err: any) => {
-            console.error(err);
-            setState((prevState: any) => {
-              return {
-                ...prevState,
-                error: state.error.concat(err),
-                uploadState: 'error',
-                uploadTask: null,
-              };
+    if (state.uploadState === 'uploading') {
+      try {
+        state.percentUploaded === 100 &&
+          state.uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then((downloadURL: string) => {
+              sendFileToMessage(
+                downloadURL,
+                state.messageRef(),
+                state.currentChannel.id
+              );
+            })
+            .catch((err: any) => {
+              console.error(err);
+              setState((prevState: any) => {
+                return {
+                  ...prevState,
+                  error: state.error.concat(err),
+                  uploadState: 'error',
+                  uploadTask: null,
+                };
+              });
             });
-          });
-    } catch (error) {
-      console.warn(error);
-      alert(
-        'Something went wrong with this file. Please try with different one'
-      );
+      } catch (error) {
+        console.warn(error);
+        alert(
+          'Something went wrong with this file. Please try with different one'
+        );
+      }
     }
-  }, [
-    state.currentChannel,
-    state.currentUser,
-    state.percentUploaded,
-    state.messageRef,
-    state.error,
-    state.uploadTask,
-  ]);
+  }, [state]);
 
   return (
     <Segment className='message__form'>

@@ -17,6 +17,7 @@ class DirectMessages extends Component<IComponentProps> {
     userRef: MyFirebase.database().ref('users'),
     connectedRef: MyFirebase.database().ref('.info/connected'),
     presenseRef: MyFirebase.database().ref('presence'),
+    activeChannel: '',
   };
 
   componentDidMount() {
@@ -87,6 +88,11 @@ class DirectMessages extends Component<IComponentProps> {
     };
     this.props.setCurrentChannel(channelData);
     this.props.setPrivateChannel(true);
+    this.setActiveChannel(user.uid);
+  };
+
+  setActiveChannel = (userId: string) => {
+    this.setState({ activeChannel: userId });
   };
 
   getChannelID = (userId: string) => {
@@ -109,6 +115,7 @@ class DirectMessages extends Component<IComponentProps> {
         {this.state.users.map((user: any) => (
           <Menu.Item
             key={user.uid}
+            active={this.state.activeChannel === user.uid}
             onClick={() => this.changeChannel(user)}
             style={{ opacity: 0.7, fontStyle: 'italic' }}
           >

@@ -3,13 +3,14 @@ import { ColorPanel, MessagePanel, MetaPanel, SidePanel } from 'Components';
 import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
-const ChatPage = ({ currentUser, currentChannel }: any) => {
+const ChatPage = ({ currentUser, currentChannel, isPrivateChannel }: any) => {
   return (
     <Grid columns='equal' className='ChatPage' style={{ background: '#eee' }}>
       <ColorPanel />
       <SidePanel currentUser={currentUser} />
       <Grid.Column style={{ marginLeft: 320 }}>
         <MessagePanel
+          isPrivateChannel={isPrivateChannel}
           key={currentChannel && currentChannel.id}
           currentChannel={currentChannel}
           currentUser={currentUser}
@@ -25,6 +26,7 @@ const ChatPage = ({ currentUser, currentChannel }: any) => {
 const mapStateToProps = (state: any) => ({
   currentUser: state.user.data,
   currentChannel: state.channel.data,
+  isPrivateChannel: state.channel.privateChannel,
 });
 
 export default connect(mapStateToProps)(ChatPage);

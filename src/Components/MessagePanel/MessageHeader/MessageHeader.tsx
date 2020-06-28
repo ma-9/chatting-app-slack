@@ -7,6 +7,7 @@ interface IComponentProps {
   numOfUniqueUsers: string;
   searchLoading: boolean;
   onChangeHandler: any;
+  isPrivateChannel: boolean;
 }
 
 const MessageHeader: React.FC<IComponentProps> = ({
@@ -14,6 +15,7 @@ const MessageHeader: React.FC<IComponentProps> = ({
   numOfUniqueUsers,
   searchLoading,
   onChangeHandler,
+  isPrivateChannel,
 }) => {
   return (
     <Segment clearing>
@@ -21,9 +23,11 @@ const MessageHeader: React.FC<IComponentProps> = ({
       <Header floated='left' fluid='true' as='h2' style={{ marginBottom: 0 }}>
         <span>
           {channelName}
-          <Icon name='star outline' color='black' />
+          {!isPrivateChannel && <Icon name='star outline' color='black' />}
         </span>
-        <HeaderSubHeader>{numOfUniqueUsers} </HeaderSubHeader>
+        {!isPrivateChannel && (
+          <HeaderSubHeader>{numOfUniqueUsers} </HeaderSubHeader>
+        )}
       </Header>
 
       {/* Channel Search input */}

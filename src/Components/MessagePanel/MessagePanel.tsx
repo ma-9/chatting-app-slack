@@ -8,6 +8,7 @@ import InnerMessage from './InnerMessage/InnerMessage';
 interface IComponentProps {
   currentChannel: any;
   currentUser: any;
+  isPrivateChannel: boolean;
 }
 
 interface IMessage {
@@ -24,9 +25,12 @@ interface IMessage {
 const MessagePanel: React.FC<IComponentProps> = ({
   currentChannel,
   currentUser,
+  isPrivateChannel,
 }) => {
   const [state, setState] = useState({
+    privateChannel: isPrivateChannel,
     messageRef: MyFirebase.database().ref('messages'),
+    privateMessagesRef: MyFirebase.database().ref('privateMessages'),
     messages: [],
     messagesLoading: true,
     numOfUniqueUsers: '',
@@ -39,9 +43,15 @@ const MessagePanel: React.FC<IComponentProps> = ({
     const addEventListner = (channelId: string) => {
       addMessageListner(channelId);
     };
+
+    const createMessageRef = () => {
+      return state.privateChannel ? state.privateMessagesRef : state.messageRef;
+    };
+
     const addMessageListner = (channelId: string) => {
       const loadedMesage: any = [];
-      state.messageRef.child(channelId).on('child_added', (snap) => {
+      const ref = createMessageRef();
+      ref.child(channelId).on('child_added', (snap) => {
         loadedMesage.push(snap.val());
         setState((prevState) => {
           return {
@@ -56,7 +66,13 @@ const MessagePanel: React.FC<IComponentProps> = ({
     if (currentChannel && currentUser) {
       addEventListner(currentChannel.id);
     }
-  }, [state.messageRef, currentChannel, currentUser]);
+  }, [
+    state.messageRef,
+    state.privateChannel,
+    state.privateMessagesRef,
+    currentChannel,
+    currentUser,
+  ]);
 
   const countUniqueUser = (messages: [IMessage]) => {
     const uniqueUser = messages.reduce((accumulator: any, currentValue) => {
@@ -73,7 +89,7 @@ const MessagePanel: React.FC<IComponentProps> = ({
   };
 
   const displayChannelName = (channel: any) =>
-    channel ? `#${channel.name}` : '#channel';
+    channel ? `${state.privateChannel ? '@' : '#'}${channel.name}` : '';
 
   const handleSearchChange = (event: any) => {
     event.persist();
@@ -108,6 +124,12 @@ const MessagePanel: React.FC<IComponentProps> = ({
     }, 1000);
   };
 
+  const getMessagesRef = () => {
+    const { messageRef, privateMessagesRef, privateChannel } = state;
+
+    return privateChannel ? privateMessagesRef : messageRef;
+  };
+
   return (
     <Fragment>
       <MessageHeader
@@ -115,6 +137,7 @@ const MessagePanel: React.FC<IComponentProps> = ({
         numOfUniqueUsers={state.numOfUniqueUsers}
         searchLoading={state.searchLoading}
         onChangeHandler={handleSearchChange}
+        isPrivateChannel={state.privateChannel}
       />
 
       <Segment>
@@ -139,7 +162,12 @@ const MessagePanel: React.FC<IComponentProps> = ({
         </Comment.Group>
       </Segment>
 
-      <MessageForm currentChannel={currentChannel} currentUser={currentUser} />
+      <MessageForm
+        currentChannel={currentChannel}
+        currentUser={currentUser}
+        isPrivateChannel={state.privateChannel}
+        messageRef={getMessagesRef}
+      />
     </Fragment>
   );
 };
