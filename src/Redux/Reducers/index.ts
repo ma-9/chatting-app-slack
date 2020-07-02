@@ -12,6 +12,7 @@ const initialState = {
     loading: true,
     error: null,
     privateChannel: false,
+    userPosts: null,
   },
 };
 
@@ -57,6 +58,11 @@ const channel_reducer = (
       return {
         ...state,
         privateChannel: action.payload.privateChannel,
+      };
+    case actionTypes.SET_USER_POSTS:
+      return {
+        ...state,
+        userPosts: action.payload.userPosts,
       };
     default:
       return state;

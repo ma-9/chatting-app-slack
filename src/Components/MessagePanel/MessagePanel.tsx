@@ -4,11 +4,14 @@ import MessageForm from './MessageForm/MessageForm';
 import { Segment, Comment } from 'semantic-ui-react';
 import { MyFirebase } from 'Config';
 import InnerMessage from './InnerMessage/InnerMessage';
+import { connect } from 'react-redux';
+import { setUserPosts } from 'Redux/Actions';
 
 interface IComponentProps {
   currentChannel: any;
   currentUser: any;
   isPrivateChannel: boolean;
+  setUserPosts: any;
 }
 
 interface IMessage {
@@ -26,6 +29,7 @@ const MessagePanel: React.FC<IComponentProps> = ({
   currentChannel,
   currentUser,
   isPrivateChannel,
+  setUserPosts,
 }) => {
   const [state, setState] = useState({
     privateChannel: isPrivateChannel,
@@ -50,6 +54,21 @@ const MessagePanel: React.FC<IComponentProps> = ({
       return state.privateChannel ? state.privateMessagesRef : state.messageRef;
     };
 
+    const countUserPosts = (messages: [IMessage]) => {
+      let userPosts = messages.reduce((acc: any, message) => {
+        if (message.creator.name in acc) {
+          acc[message.creator.name].count += 1;
+        } else {
+          acc[message.creator.name] = {
+            avatar: message.creator.avataar,
+            count: 1,
+          };
+        }
+        return acc;
+      }, {});
+      setUserPosts(userPosts);
+    };
+
     const addMessageListner = (channelId: string) => {
       const loadedMesage: any = [];
       const ref = createMessageRef();
@@ -63,6 +82,7 @@ const MessagePanel: React.FC<IComponentProps> = ({
           };
         });
         countUniqueUser(loadedMesage);
+        countUserPosts(loadedMesage);
       });
     };
 
@@ -93,6 +113,7 @@ const MessagePanel: React.FC<IComponentProps> = ({
     state.usersRef,
     currentChannel,
     currentUser,
+    setUserPosts,
   ]);
 
   const countUniqueUser = (messages: [IMessage]) => {
@@ -230,4 +251,4 @@ const MessagePanel: React.FC<IComponentProps> = ({
   );
 };
 
-export default MessagePanel;
+export default connect(null, { setUserPosts })(MessagePanel);
