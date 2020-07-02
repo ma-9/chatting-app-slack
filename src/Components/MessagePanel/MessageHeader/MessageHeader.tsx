@@ -8,6 +8,8 @@ interface IComponentProps {
   searchLoading: boolean;
   onChangeHandler: any;
   isPrivateChannel: boolean;
+  handleStar: any;
+  isChannelStarred: boolean;
 }
 
 const MessageHeader: React.FC<IComponentProps> = ({
@@ -16,14 +18,31 @@ const MessageHeader: React.FC<IComponentProps> = ({
   searchLoading,
   onChangeHandler,
   isPrivateChannel,
+  handleStar,
+  isChannelStarred,
 }) => {
   return (
     <Segment clearing>
       {/* Channel Title */}
       <Header floated='left' fluid='true' as='h2' style={{ marginBottom: 0 }}>
         <span>
-          {channelName}
-          {!isPrivateChannel && <Icon name='star outline' color='black' />}
+          {channelName}{' '}
+          {!isPrivateChannel && isChannelStarred ? (
+            <Icon
+              style={{ cursor: 'pointer', transition: '0.5s' }}
+              className='activeStar'
+              name='star'
+              onClick={handleStar}
+              color='orange'
+            />
+          ) : (
+            <Icon
+              onClick={handleStar}
+              style={{ cursor: 'pointer', transition: '0.5s' }}
+              name='star outline'
+              color='black'
+            />
+          )}
         </span>
         {!isPrivateChannel && (
           <HeaderSubHeader>{numOfUniqueUsers} </HeaderSubHeader>

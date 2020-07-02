@@ -31,12 +31,14 @@ const MessagePanel: React.FC<IComponentProps> = ({
     privateChannel: isPrivateChannel,
     messageRef: MyFirebase.database().ref('messages'),
     privateMessagesRef: MyFirebase.database().ref('privateMessages'),
+    usersRef: MyFirebase.database().ref('users'),
     messages: [],
     messagesLoading: true,
     numOfUniqueUsers: '',
     searchTerm: '',
     searchLoading: false,
     searchResults: [],
+    isChannelStarred: false,
   });
 
   useEffect(() => {
@@ -63,13 +65,32 @@ const MessagePanel: React.FC<IComponentProps> = ({
         countUniqueUser(loadedMesage);
       });
     };
+
+    const addUserStarListners = (channelId: string, userUid: string) => {
+      state.usersRef
+        .child(userUid)
+        .child('starred')
+        .once('value')
+        .then((data) => {
+          if (data.val() !== null) {
+            const channelIds = Object.keys(data.val());
+            const prevStarred = channelIds.includes(channelId);
+            setState((prevState: any) => {
+              return { ...prevState, isChannelStarred: prevStarred };
+            });
+          }
+        });
+    };
+
     if (currentChannel && currentUser) {
       addEventListner(currentChannel.id);
+      addUserStarListners(currentChannel.id, currentUser.uid);
     }
   }, [
     state.messageRef,
     state.privateChannel,
     state.privateMessagesRef,
+    state.usersRef,
     currentChannel,
     currentUser,
   ]);
@@ -130,9 +151,46 @@ const MessagePanel: React.FC<IComponentProps> = ({
     return privateChannel ? privateMessagesRef : messageRef;
   };
 
+  const handleStar = () => {
+    setState((prevState: any) => {
+      return { ...prevState, isChannelStarred: !state.isChannelStarred };
+    });
+    starringChannel(!state.isChannelStarred);
+  };
+
+  const starringChannel = (passedValue: boolean) => {
+    if (passedValue) {
+      // Handle Starred Event
+      currentChannel &&
+        state.usersRef.child(`${currentUser.uid}/starred`).update({
+          [currentChannel.id]: {
+            name: currentChannel.name,
+            detail: currentChannel.detail,
+            createdBy: {
+              name: currentChannel.createdBy.name,
+              avatar: currentChannel.createdBy.avatar,
+            },
+          },
+        });
+    } else {
+      // Handle UnStarred Event
+      currentChannel &&
+        state.usersRef
+          .child(`${currentUser.uid}/starred`)
+          .child(currentChannel.id)
+          .remove((err) => {
+            if (err !== null) {
+              console.error(err);
+            }
+          });
+    }
+  };
+
   return (
     <Fragment>
       <MessageHeader
+        isChannelStarred={state.isChannelStarred}
+        handleStar={handleStar}
         channelName={displayChannelName(currentChannel)}
         numOfUniqueUsers={state.numOfUniqueUsers}
         searchLoading={state.searchLoading}

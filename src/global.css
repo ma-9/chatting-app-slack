@@ -41,3 +41,8 @@ body,
 .menu {
   padding-bottom: 2em;
 }
+
+/* Message Header Star */
+.activeStar {
+  zoom: 1.1;
+}
