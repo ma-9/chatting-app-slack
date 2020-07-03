@@ -8,11 +8,20 @@ const ChatPage = ({
   currentChannel,
   isPrivateChannel,
   userPosts,
+  primaryColor,
+  secondaryColor,
 }: any) => {
   return (
-    <Grid columns='equal' className='ChatPage' style={{ background: '#eee' }}>
-      <ColorPanel />
-      <SidePanel currentUser={currentUser} />
+    <Grid
+      columns='equal'
+      className='ChatPage'
+      style={{ background: secondaryColor }}
+    >
+      <ColorPanel
+        key={currentUser && currentUser.id}
+        currentUser={currentUser}
+      />
+      <SidePanel currentUser={currentUser} primaryColor={primaryColor} />
       <Grid.Column style={{ marginLeft: 320 }}>
         <MessagePanel
           isPrivateChannel={isPrivateChannel}
@@ -25,7 +34,7 @@ const ChatPage = ({
         <MetaPanel
           userPosts={userPosts}
           currentChannel={currentChannel}
-          key={currentChannel && currentChannel.id}
+          key={currentChannel && currentChannel.name}
           isPrivateChannel={isPrivateChannel}
         />
       </Grid.Column>
@@ -38,6 +47,8 @@ const mapStateToProps = (state: any) => ({
   currentChannel: state.channel.data,
   isPrivateChannel: state.channel.privateChannel,
   userPosts: state.channel.userPosts,
+  primaryColor: state.color.primaryColor,
+  secondaryColor: state.color.secondaryColor,
 });
 
 export default connect(mapStateToProps)(ChatPage);

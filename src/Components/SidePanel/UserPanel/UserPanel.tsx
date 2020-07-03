@@ -13,6 +13,7 @@ import { MyFirebase } from 'Config';
 
 interface IProps {
   currentUser: any;
+  primaryColor: string;
 }
 
 class UserPanel extends Component<IProps> {
@@ -52,7 +53,7 @@ class UserPanel extends Component<IProps> {
 
   render() {
     return (
-      <Grid style={{ background: '#4c3c4c' }}>
+      <Grid style={{ background: this.props.primaryColor }}>
         <GridColumn>
           <GridRow style={{ padding: '1.2rem', margin: 0 }}>
             {/* App Header */}

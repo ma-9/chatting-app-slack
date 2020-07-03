@@ -14,6 +14,10 @@ const initialState = {
     privateChannel: false,
     userPosts: null,
   },
+  colorsState: {
+    primaryColor: '#4c3c4c',
+    secondaryColor: '#eee',
+  },
 };
 
 interface IActionProps {
@@ -69,9 +73,25 @@ const channel_reducer = (
   }
 };
 
+const color_reducer = (
+  state = initialState.colorsState,
+  action: IActionProps
+) => {
+  switch (action.type) {
+    case actionTypes.SET_COLOR:
+      return {
+        primaryColor: action.payload.primaryColor,
+        secondaryColor: action.payload.secondaryColor,
+      };
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   user: user_reducer,
   channel: channel_reducer,
+  color: color_reducer,
 });
 
 export default rootReducer;

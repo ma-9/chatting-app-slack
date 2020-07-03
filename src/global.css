@@ -46,3 +46,23 @@ body,
 .activeStar {
   zoom: 1.1;
 }
+
+/* Color Panel */
+.color__container {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  width: 35px;
+  border-radius: 3px;
+}
+
+.color__sqaure {
+  width: 35px;
+  height: 35px;
+}
+
+.color__overlay {
+  width: 85px;
+  height: 35px;
+  transform: rotate(225deg);
+}
