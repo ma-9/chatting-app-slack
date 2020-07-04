@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import MessageHeader from './MessageHeader/MessageHeader';
 import MessageForm from './MessageForm/MessageForm';
 import { Segment, Comment } from 'semantic-ui-react';
@@ -7,7 +7,9 @@ import InnerMessage from './InnerMessage/InnerMessage';
 import { connect } from 'react-redux';
 import { setUserPosts } from 'Redux-store/Redux-actions';
 import { IMessage } from 'Global-interfaces';
+
 import TypingComponent from './Typing/TypingComponent';
+import SkeletonComponent from './MessageSkeleton/MessageSkeleton';
 
 interface IProps {
   currentChannel: any;
@@ -38,6 +40,17 @@ const MessagePanel: React.FC<IProps> = ({
     typingUsers: [],
     connectedRef: MyFirebase.database().ref('.info/connected'),
   });
+
+  let messageEndPositionRef: any = useRef(null);
+
+  useEffect(() => {
+    if (messageEndPositionRef) {
+      messageEndPositionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }
+  }, [state]);
 
   useEffect(() => {
     const addEventListner = (channelId: string) => {
@@ -262,6 +275,16 @@ const MessagePanel: React.FC<IProps> = ({
     );
   };
 
+  const displayMessageSkeleton = (isMessageLoading: boolean) => {
+    return isMessageLoading ? (
+      <React.Fragment>
+        {[...Array(10)].map((_, i) => (
+          <SkeletonComponent key={i} />
+        ))}
+      </React.Fragment>
+    ) : null;
+  };
+
   return (
     <Fragment>
       <MessageHeader
@@ -276,6 +299,7 @@ const MessagePanel: React.FC<IProps> = ({
 
       <Segment>
         <Comment.Group className='messages'>
+          {displayMessageSkeleton(state.messagesLoading)}
           {state.searchTerm
             ? state.searchResults.length > 0 &&
               state.searchResults.map((message: IMessage) => (
@@ -294,6 +318,7 @@ const MessagePanel: React.FC<IProps> = ({
                 />
               ))}
           {displayTypingUsers(state.typingUsers)}
+          <div ref={messageEndPositionRef}></div>
         </Comment.Group>
       </Segment>
 

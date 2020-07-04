@@ -114,6 +114,14 @@ class ColorPanel extends Component<IProps> {
     }
   }
 
+  componentWillUnmount() {
+    this.removeListener();
+  }
+
+  removeListener = () => {
+    this.state.userRef.child(`${this.state.user.uid}/colors`).off();
+  };
+
   render() {
     const { modal, primaryColor, secondaryColor, userColors } = this.state;
     return (

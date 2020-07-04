@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Segment, Input, Button } from 'semantic-ui-react';
 import { v4 as uuidv4 } from 'uuid';
 import { MyFirebase } from 'Config';
+
+import { Picker, emojiIndex } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
 
 import FileModal from '../FileModal/FileModal';
 import ProgressBar from '../ProgressBar/ProgressBar';
@@ -25,6 +28,7 @@ interface IState {
   currentUser: any;
   messageRef: any;
   typingRef: any;
+  isEmojiPickerOpen: boolean;
 }
 
 const MessageForm: React.FC<IProps> = ({
@@ -45,6 +49,7 @@ const MessageForm: React.FC<IProps> = ({
     currentUser,
     messageRef,
     typingRef: MyFirebase.database().ref('typing'),
+    isEmojiPickerOpen: false,
   });
 
   const handleOpenModal = () => {
@@ -220,9 +225,23 @@ const MessageForm: React.FC<IProps> = ({
         );
       }
     }
+
+    // ComponentWillUnMount COde in FUnctional COmponent
+    return () => {
+      if (state.uploadTask !== null) {
+        state.uploadTask.cancel();
+        setState((prevState: any) => {
+          return { ...prevState, uploadTask: null };
+        });
+      }
+    };
   }, [state]);
 
-  const handleUserTyping = () => {
+  const handleUserTyping = (event: any) => {
+    if (event.ctrlKey && event.keyCode === 13) {
+      handleOnSendMessage();
+    }
+
     const { message, typingRef, currentChannel, currentUser } = state;
     if (message.trim().length > 0) {
       typingRef
@@ -234,13 +253,56 @@ const MessageForm: React.FC<IProps> = ({
     }
   };
 
+  const handleToggleEmojiPicker = () => {
+    setState((prevState: any) => {
+      return { ...prevState, isEmojiPickerOpen: !state.isEmojiPickerOpen };
+    });
+  };
+
+  let inputRef: any = useRef();
+
+  const handleAddEmoji = (emoji: any) => {
+    const oldMesage = state.message;
+    const newMessage = colonToUnicode(` ${oldMesage} ${emoji.colons} `);
+    setState((prevState: any) => {
+      return { ...prevState, message: newMessage, isEmojiPickerOpen: false };
+    });
+    setTimeout(() => {
+      inputRef.current.focus();
+    }, 100);
+  };
+
+  const colonToUnicode = (message: string) => {
+    return message.replace(/:[A-Za-z0-9_+-]+:/g, (x) => {
+      x = x.replace(/:/g, '');
+      let emoji: any = emojiIndex.emojis[x];
+      if (typeof emoji !== 'undefined') {
+        let unicode = emoji.native;
+        if (typeof unicode !== 'undefined') {
+          return unicode;
+        }
+      }
+      x = ':' + x + ':';
+      return x;
+    });
+  };
+
   return (
     <Segment className='message__form'>
+      {state.isEmojiPickerOpen && (
+        <Picker
+          set='apple'
+          onClick={handleAddEmoji}
+          title='Pick your emoji'
+          emoji='point_up'
+        />
+      )}
       <Input
         fluid
         onKeyDown={handleUserTyping}
         name='message'
         onChange={handleOnChange}
+        ref={inputRef}
         className={
           state.error.some((err: any) => err.message.toLowerCase() !== '')
             ? 'error'
@@ -248,7 +310,13 @@ const MessageForm: React.FC<IProps> = ({
         }
         value={state.message}
         style={{ marginBottom: '0.7em' }}
-        label={<Button icon='add' />}
+        label={
+          <Button
+            icon={state.isEmojiPickerOpen ? 'close' : 'add'}
+            onClick={handleToggleEmojiPicker}
+            content={state.isEmojiPickerOpen ? 'Close' : null}
+          />
+        }
         labelPosition='left'
         placeholder='Write your message'
       />
