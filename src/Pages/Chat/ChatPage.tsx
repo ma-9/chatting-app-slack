@@ -1,5 +1,10 @@
 import React from 'react';
-import { ColorPanel, MessagePanel, MetaPanel, SidePanel } from 'Components';
+import {
+  ColorPanel,
+  MessagePanel,
+  MetaPanel,
+  SidePanel,
+} from 'React-components';
 import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 

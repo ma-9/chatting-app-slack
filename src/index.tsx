@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'semantic-ui-css/semantic.min.css';
 import './global.css';
-import App from './App/App';
+import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import rootReducer from 'Redux/Reducers';
+import rootReducer from 'Redux-store/Redux-reducers';
 
 const store = createStore(rootReducer, composeWithDevTools());
 
