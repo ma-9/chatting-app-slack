@@ -23,6 +23,8 @@
     "@types/uuid": "^8.0.0",
     "emoji-mart": "^3.0.0",
     "firebase": "^7.15.1",
+    "firebase-tools": "^8.4.3",
+    "global": "^4.4.0",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
     "react": "^16.13.1",
