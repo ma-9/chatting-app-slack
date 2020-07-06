@@ -26,6 +26,14 @@ class StarredChannelComponent extends Component<IProps> {
     this.addEventListners(this.state.user.uid);
   }
 
+  componentWillUnmount() {
+    this.removeListener();
+  }
+
+  removeListener = () => {
+    this.state.userRef.child(`${this.state.user.uid}/starred`).off();
+  };
+
   addEventListners = (userID: string) => {
     this.state.userRef
       .child(userID)

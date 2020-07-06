@@ -124,7 +124,7 @@ const MessageForm: React.FC<IProps> = ({
 
   const getPath = () => {
     if (isPrivateChannel) {
-      return `chat/private-${state.currentChannel.id}`;
+      return `chat/private/${state.currentChannel.id}`;
     } else {
       return `chat/public`;
     }
@@ -225,16 +225,6 @@ const MessageForm: React.FC<IProps> = ({
         );
       }
     }
-
-    // ComponentWillUnMount COde in FUnctional COmponent
-    return () => {
-      if (state.uploadTask !== null) {
-        state.uploadTask.cancel();
-        setState((prevState: any) => {
-          return { ...prevState, uploadTask: null };
-        });
-      }
-    };
   }, [state]);
 
   const handleUserTyping = (event: any) => {

@@ -27,22 +27,23 @@ const MessageHeader: React.FC<IProps> = ({
       <Header floated='left' fluid='true' as='h2' style={{ marginBottom: 0 }}>
         <span>
           {channelName}{' '}
-          {!isPrivateChannel && isChannelStarred ? (
-            <Icon
-              style={{ cursor: 'pointer', transition: '0.5s' }}
-              className='activeStar'
-              name='star'
-              onClick={handleStar}
-              color='orange'
-            />
-          ) : (
-            <Icon
-              onClick={handleStar}
-              style={{ cursor: 'pointer', transition: '0.5s' }}
-              name='star outline'
-              color='black'
-            />
-          )}
+          {!isPrivateChannel &&
+            (isChannelStarred ? (
+              <Icon
+                style={{ cursor: 'pointer', transition: '0.5s' }}
+                className='activeStar'
+                name='star'
+                onClick={handleStar}
+                color='orange'
+              />
+            ) : (
+              <Icon
+                onClick={handleStar}
+                style={{ cursor: 'pointer', transition: '0.5s' }}
+                name='star outline'
+                color='black'
+              />
+            ))}
         </span>
         {!isPrivateChannel && (
           <HeaderSubHeader>{numOfUniqueUsers} </HeaderSubHeader>

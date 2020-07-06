@@ -26,6 +26,8 @@ class DirectMessages extends Component<IProps> {
 
   removeListeners = () => {
     this.state.userRef.off();
+    this.state.presenseRef.off();
+    this.state.connectedRef.off();
   };
 
   addEventListners = (currentUserId: string) => {

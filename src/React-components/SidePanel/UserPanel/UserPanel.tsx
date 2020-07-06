@@ -112,7 +112,7 @@ class UserPanel extends Component<IProps, IState> {
   handleImageUploadToFirebase = () => {
     const { storageRef, user, blob, metadata } = this.state;
     storageRef
-      .child(`avatars/user-${user.uid}`)
+      .child(`avatars/user/${user.uid}`)
       .put(blob, metadata)
       .then((snap) => {
         snap.ref.getDownloadURL().then((downloadURl) => {
